@@ -1,0 +1,99 @@
+{% extends 'organizer/base.html' %}
+
+{% block title %}Preview - FileOrganizer Pro{% endblock %}
+
+{% block content %}
+<div data-animate>
+    <h1 class="text-4xl font-bold text-gray-800 mb-2"><i class="fas fa-eye mr-3"></i>Preview Organization</h1>
+    <p class="text-gray-600 mb-8">Review how your files will be organized before finalizing</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <p class="text-gray-500 text-sm font-semibold uppercase mb-1">Total Files</p>
+            <p class="text-3xl font-bold text-purple-600">{{ preview|length }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <p class="text-gray-500 text-sm font-semibold uppercase mb-1">Job</p>
+            <p class="text-xl font-bold text-gray-800">{{ job.job_name }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <p class="text-gray-500 text-sm font-semibold uppercase mb-1">Rename Pattern</p>
+            <p class="text-sm font-mono text-gray-700">{{ pattern }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 text-center">
+            <p class="text-gray-500 text-sm font-semibold uppercase mb-1">Total Size</p>
+            <p class="text-xl font-bold text-green-600">{{ job.total_size|filesizeformat }}</p>
+        </div>
+    </div>
+
+    <!-- Files Table -->
+    <div class="bg-white rounded-lg shadow" data-animate>
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-list mr-3"></i>File Preview</h2>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b sticky top-0">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">#</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Original Name</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">New Name</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Category</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Size</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for item in preview %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 font-semibold text-gray-600">{{ item.index }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-file text-gray-400 mr-2"></i>
+                                <span class="text-gray-800 font-semibold">{{ item.original_name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-gray-700">{{ item.new_name }}</td>
+                        <td class="px-6 py-4">
+                            {% if item.category == 'images' %}
+                                <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-image mr-1"></i>Images</span>
+                            {% elif item.category == 'documents' %}
+                                <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-file-pdf mr-1"></i>Documents</span>
+                            {% elif item.category == 'videos' %}
+                                <span class="inline-block bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-video mr-1"></i>Videos</span>
+                            {% elif item.category == 'audio' %}
+                                <span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-music mr-1"></i>Audio</span>
+                            {% elif item.category == 'archives' %}
+                                <span class="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-archive mr-1"></i>Archives</span>
+                            {% else %}
+                                <span class="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-semibold"><i class="fas fa-folder mr-1"></i>{{ item.category|title }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-gray-600 text-sm">
+                            {% if item.file_size > 1048576 %}
+                                {{ item.file_size|filesizeformat }}
+                            {% else %}
+                                {{ item.file_size|filesizeformat }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-4 mt-8">
+        <form method="post" action="{% url 'organize' %}" class="flex-1">
+            {% csrf_token %}
+            <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 rounded-lg hover:shadow-lg transition">
+                <i class="fas fa-check-circle mr-2"></i>Apply & Download ZIP
+            </button>
+        </form>
+        <a href="{% url 'upload' %}" class="px-8 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition">
+            <i class="fas fa-arrow-left mr-2"></i>Back
+        </a>
+    </div>
+</div>
+{% endblock %}
