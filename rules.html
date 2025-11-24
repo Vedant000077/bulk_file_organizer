@@ -1,0 +1,120 @@
+{% extends 'organizer/base.html' %}
+
+{% block title %}Custom Rules - FileOrganizer Pro{% endblock %}
+
+{% block content %}
+<div data-animate>
+    <h1 class="text-4xl font-bold text-gray-800 mb-2"><i class="fas fa-cogs mr-3"></i>Custom Organization Rules</h1>
+    <p class="text-gray-600 mb-8">Create advanced rules to auto-organize your files</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Create Rule Form -->
+        <div class="lg:col-span-1 bg-white rounded-lg shadow-lg p-6" data-animate>
+            <h3 class="text-xl font-bold text-gray-800 mb-6"><i class="fas fa-plus-circle mr-2"></i>New Rule</h3>
+            
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Rule Name</label>
+                    {{ form.name }}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Type</label>
+                    {{ form.rule_type }}
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Match Pattern</label>
+                    {{ form.match_value }}
+                    <p class="text-xs text-gray-500 mt-1">e.g., .pdf or size:>10MB or *.jpg</p>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Target Folder</label>
+                    {{ form.target_folder }}
+                </div>
+
+                <div class="flex items-center">
+                    {{ form.enabled }}
+                    <label class="text-gray-700 font-semibold ml-2">Enabled</label>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-2 rounded-lg hover:shadow-lg transition">
+                    <i class="fas fa-save mr-2"></i>Create Rule
+                </button>
+            </form>
+        </div>
+
+        <!-- Rules List -->
+        <div class="lg:col-span-2 bg-white rounded-lg shadow-lg" data-animate>
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-list mr-2"></i>Your Rules ({{ rules|length }})</h3>
+            </div>
+
+            {% if rules %}
+            <div class="divide-y max-h-96 overflow-y-auto">
+                {% for rule in rules %}
+                <div class="p-6 hover:bg-gray-50 transition">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800 text-lg">{{ rule.name }}</h4>
+                            <p class="text-sm text-gray-600 mt-1">
+                                <i class="fas fa-tag mr-2"></i>{{ rule.get_rule_type_display }}
+                            </p>
+                        </div>
+                        {% if rule.enabled %}
+                        <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+                            <i class="fas fa-check-circle mr-1"></i>Active
+                        </span>
+                        {% else %}
+                        <span class="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-semibold">
+                            <i class="fas fa-times-circle mr-1"></i>Inactive
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 rounded p-3 mb-4 text-sm">
+                        <p><span class="font-semibold text-gray-700">Pattern:</span> <code class="bg-gray-200 px-2 py-1 rounded">{{ rule.match_value }}</code></p>
+                        <p class="mt-2"><span class="font-semibold text-gray-700">Target:</span> <span class="text-gray-600">{{ rule.target_folder }}</span></p>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <a href="{% url 'delete_rule' rule.id %}" class="flex-1 px-4 py-2 bg-red-100 text-red-600 font-semibold rounded hover:bg-red-200 transition text-center">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="p-12 text-center text-gray-500">
+                <i class="fas fa-inbox text-4xl mb-4 opacity-50"></i>
+                <p class="text-lg">No rules yet. Create your first rule to get started!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Rule Types Info -->
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-500">
+            <h4 class="font-bold text-blue-900 mb-2"><i class="fas fa-file-alt mr-2"></i>Extension</h4>
+            <p class="text-sm text-blue-700">Group by file extension like .pdf, .jpg, .mp4</p>
+        </div>
+        <div class="bg-green-50 rounded-lg p-6 border-l-4 border-green-500">
+            <h4 class="font-bold text-green-900 mb-2"><i class="fas fa-database mr-2"></i>File Size</h4>
+            <p class="text-sm text-green-700">Organize by size: >10MB, <100MB, etc.</p>
+        </div>
+        <div class="bg-orange-50 rounded-lg p-6 border-l-4 border-orange-500">
+            <h4 class="font-bold text-orange-900 mb-2"><i class="fas fa-calendar mr-2"></i>Date Modified</h4>
+            <p class="text-sm text-orange-700">Group by date: 2024, 2023, January, etc.</p>
+        </div>
+        <div class="bg-purple-50 rounded-lg p-6 border-l-4 border-purple-500">
+            <h4 class="font-bold text-purple-900 mb-2"><i class="fas fa-search mr-2"></i>File Name</h4>
+            <p class="text-sm text-purple-700">Match patterns: invoice*, receipt*, etc.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
