@@ -1,17 +1,12 @@
-from django.urls import path
-from . import views
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('register/', views.register, name='register'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('upload/', views.upload, name='upload'),
-    path('preview/', views.preview, name='preview'),
-    path('organize/', views.organize, name='organize'),
-    path('download/<int:job_id>/', views.download, name='download'),
-    path('job/<int:job_id>/', views.job_detail, name='job_detail'),
-    path('rules/', views.rules, name='rules'),
-    path('rules/delete/<int:rule_id>/', views.delete_rule, name='delete_rule'),
+    path('admin/', admin.site.urls),
+    path('', include('organizer.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
