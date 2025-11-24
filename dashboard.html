@@ -1,0 +1,125 @@
+{% extends 'organizer/base.html' %}
+
+{% block title %}Dashboard - FileOrganizer Pro{% endblock %}
+
+{% block content %}
+<div data-animate>
+    <div class="mb-12">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">Welcome, {{ user.first_name|default:user.username }}! 👋</h1>
+        <p class="text-gray-600">Organize your files smarter and faster</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div class="bg-white rounded-lg shadow p-6 hover-lift" data-animate>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-semibold uppercase">Total Jobs</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ stats.total_jobs }}</p>
+                </div>
+                <i class="fas fa-briefcase text-4xl text-purple-500 opacity-20"></i>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 hover-lift" data-animate>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-semibold uppercase">Completed</p>
+                    <p class="text-3xl font-bold text-green-600">{{ stats.completed_jobs }}</p>
+                </div>
+                <i class="fas fa-check-circle text-4xl text-green-500 opacity-20"></i>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 hover-lift" data-animate>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-semibold uppercase">Total Files</p>
+                    <p class="text-3xl font-bold text-blue-600">{{ stats.total_files }}</p>
+                </div>
+                <i class="fas fa-files text-4xl text-blue-500 opacity-20"></i>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 hover-lift" data-animate>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm font-semibold uppercase">Space Used</p>
+                    <p class="text-3xl font-bold text-orange-600">{{ stats.total_space }}</p>
+                </div>
+                <i class="fas fa-database text-4xl text-orange-500 opacity-20"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <a href="{% url 'upload' %}" class="bg-white rounded-lg shadow p-6 hover-lift text-center" data-animate>
+            <i class="fas fa-cloud-upload-alt text-5xl text-purple-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">New Upload</h3>
+            <p class="text-gray-600">Start organizing files</p>
+        </a>
+
+        <a href="{% url 'rules' %}" class="bg-white rounded-lg shadow p-6 hover-lift text-center" data-animate>
+            <i class="fas fa-cogs text-5xl text-blue-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Custom Rules</h3>
+            <p class="text-gray-600">Manage organization rules</p>
+        </a>
+
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <i class="fas fa-star text-5xl text-yellow-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Pro Features</h3>
+            <p class="text-gray-600">Unlock more power</p>
+        </div>
+    </div>
+
+    <!-- Recent Jobs -->
+    <div class="bg-white rounded-lg shadow" data-animate>
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-history mr-3"></i>Recent Jobs</h2>
+        </div>
+        
+        {% if jobs %}
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Job Name</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Files</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for job in jobs %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 font-semibold text-gray-800">{{ job.job_name }}</td>
+                        <td class="px-6 py-4 text-gray-600">{{ job.total_files }}</td>
+                        <td class="px-6 py-4">
+                            {% if job.status == 'completed' %}
+                                <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold"><i class="fas fa-check-circle mr-1"></i>Completed</span>
+                            {% elif job.status == 'processing' %}
+                                <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold pulse"><i class="fas fa-spinner mr-1"></i>Processing</span>
+                            {% else %}
+                                <span class="inline-block bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold"><i class="fas fa-clock mr-1"></i>{{ job.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-gray-600">{{ job.created_at|date:"M d, Y" }}</td>
+                        <td class="px-6 py-4">
+                            <a href="{% url 'job_detail' job.id %}" class="text-purple-600 hover:text-purple-800 font-semibold"><i class="fas fa-eye mr-1"></i>View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-6 text-center text-gray-500">
+            <i class="fas fa-inbox text-4xl mb-4 opacity-50"></i>
+            <p>No jobs yet. <a href="{% url 'upload' %}" class="text-purple-600 hover:text-purple-800 font-semibold">Create one</a></p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

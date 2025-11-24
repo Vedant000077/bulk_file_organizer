@@ -1,0 +1,53 @@
+{% extends 'organizer/base.html' %}
+
+{% block title %}Login - FileOrganizer Pro{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md" data-animate>
+        <div class="bg-white rounded-lg shadow-2xl p-8">
+            <div class="text-center mb-8">
+                <div class="inline-block bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-full mb-4">
+                    <i class="fas fa-lock text-white text-2xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800">Welcome Back</h2>
+                <p class="text-gray-600 mt-2">Sign in to your account</p>
+            </div>
+
+            {% if error %}
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Username</label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
+                        <input type="text" name="username" required class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter your username">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Password</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
+                        <input type="password" name="password" required class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter your password">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full btn-gradient text-white font-semibold py-2 rounded-lg hover:shadow-lg transition">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">Don't have an account? <a href="{% url 'register' %}" class="text-purple-600 hover:text-purple-800 font-semibold">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

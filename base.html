@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bulk File Organiser{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .btn-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
+        .file-input-custom { cursor: pointer; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    {% if user.is_authenticated %}
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-folder-open text-2xl"></i>
+                    <a href="{% url 'dashboard' %}" class="text-xl font-bold">FileOrganizer Pro</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{% url 'dashboard' %}" class="hover:text-gray-200 transition"><i class="fas fa-chart-line"></i> Dashboard</a>
+                    <a href="{% url 'upload' %}" class="hover:text-gray-200 transition"><i class="fas fa-upload"></i> Upload</a>
+                    <a href="{% url 'rules' %}" class="hover:text-gray-200 transition"><i class="fas fa-cogs"></i> Rules</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm">{{ user.username }}</span>
+                    <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+            <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-2" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 text-center py-6 mt-16">
+        <p>&copy; 2025 FileOrganizer Pro. Organize smarter, work faster.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth animations
+            const elements = document.querySelectorAll('[data-animate]');
+            elements.forEach((el, idx) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.5s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, idx * 100);
+            });
+        });
+    </script>
+</body>
+</html>
